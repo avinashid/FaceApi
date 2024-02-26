@@ -1,10 +1,43 @@
 import { useState, useEffect } from "react";
 import FaceLoader from "./FaceLoader";
 import { AnimatePresence, motion } from "framer-motion";
-const Scan = ({ detectingFace, detectingPosture }) => {
-  const [stage, setStage] = useState(3);
-  const [error, setError] = useState(true);
-  useEffect(() => {}, [stage]);
+const Scan = ({ validate, setSuccess }) => {
+  const [stage, setStage] = useState(1);
+  const [error, setError] = useState(false);
+  useEffect(() => {
+    console.log(validate, "scan");
+    switch (stage) {
+      case 1:
+        {
+          if (validate.face > 0) {
+            setStage(2);
+            setError(false);
+          }
+          if (validate.face == -1) setError(true);
+        }
+
+        break;
+
+      case 2: {
+        if (validate.validatePosture > 0) {
+          setStage(3);
+          setError(false);
+        }
+        if (validate.validatePosture == -1) setError(true);
+        break;
+      }
+      default:
+        break;
+    }
+  }, [validate, stage]);
+
+  useEffect(() => {
+    if (stage == 3) {
+      setTimeout(() => {
+        setStage(4);
+      }, 2000);
+    }
+  }, [stage]);
 
   return (
     <div className="flex flex-col self-end relative top-8  gap-4 items-center    h-full">
@@ -41,7 +74,7 @@ const Scan = ({ detectingFace, detectingPosture }) => {
                 stage == 3 && "animate-ping"
               }`}
             ></div>
-            Validating face...
+            Validating all...
           </div>
         )}
         <AnimatePresence>
@@ -55,6 +88,8 @@ const Scan = ({ detectingFace, detectingPosture }) => {
                 if (error) {
                   setError(false);
                   setStage(1);
+                } else {
+                  setSuccess(true);
                 }
               }}
             >
