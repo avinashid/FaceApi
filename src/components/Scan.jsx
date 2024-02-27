@@ -40,44 +40,62 @@ const Scan = ({ validate, setSuccess }) => {
   }, [stage]);
 
   return (
-    <div className="flex flex-col self-end relative top-8  gap-4 items-center    h-full">
+    <motion.div
+      className="flex flex-col self-end relative top-8  gap-4 items-center    h-full"
+      initial={{ scale: 0, y: 20 }}
+      animate={{ scale: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 400 }}
+    >
       <FaceLoader error={error} stage={stage} />
-      <motion.div
-        className="flex flex-col gap-4 relative -top-20  "
-        initial={{ color: "white" }}
-        animate={{ color: !error ? "white" : "red" }}
-      >
-        {stage >= 1 && (
-          <div className="flex flex-row items-center gap-4">
-            <div
-              className={`rounded-full w-2 h-2 bg-white ${
-                stage == 1 && "animate-ping"
-              }`}
-            ></div>
-            Detecting face...
-          </div>
-        )}
-        {stage >= 2 && (
-          <motion.div className="flex flex-row items-center gap-4">
-            <div
-              className={`rounded-full w-2 h-2 bg-white ${
-                stage == 2 && "animate-ping"
-              }`}
-            ></div>
-            Detecting posture...
-          </motion.div>
-        )}
-        {stage >= 3 && (
-          <div className="flex flex-row items-center gap-4">
-            <div
-              className={`rounded-full w-2 h-2 bg-white ${
-                stage == 3 && "animate-ping"
-              }`}
-            ></div>
-            Validating all...
-          </div>
-        )}
-        <AnimatePresence>
+      <AnimatePresence>
+        <motion.div
+          className="flex flex-col gap-4 relative -top-20  "
+          initial={{ color: "white" }}
+          animate={{ color: !error ? "white" : "red" }}
+        >
+          {stage >= 1 && (
+            <motion.div
+              className="flex flex-row items-center gap-4"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div
+                className={`rounded-full w-2 h-2 bg-white ${
+                  stage == 1 && "animate-ping"
+                }`}
+              ></div>
+              Detecting face...
+            </motion.div>
+          )}
+          {stage >= 2 && (
+            <motion.div
+              className="flex flex-row items-center gap-4"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div
+                className={`rounded-full w-2 h-2 bg-white ${
+                  stage == 2 && "animate-ping"
+                }`}
+              ></div>
+              Detecting posture...
+            </motion.div>
+          )}
+          {stage >= 3 && (
+            <motion.div
+              className="flex flex-row items-center gap-4"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <div
+                className={`rounded-full w-2 h-2 bg-white ${
+                  stage == 3 && "animate-ping"
+                }`}
+              ></div>
+              Validating all...
+            </motion.div>
+          )}
+
           {(stage == 4 || error) && (
             <motion.button
               initial={{ opacity: 0 }}
@@ -98,9 +116,9 @@ const Scan = ({ validate, setSuccess }) => {
                 : "Success Continue to dashboard?"}
             </motion.button>
           )}
-        </AnimatePresence>
-      </motion.div>
-    </div>
+        </motion.div>
+      </AnimatePresence>
+    </motion.div>
   );
 };
 

@@ -75,17 +75,22 @@ function Home({ setCamera, captureVideo, setCaptureVideo, setSuccess }) {
           };
 
           shoulderLine
+            .attr("stroke", "blue")
+            .attr("stroke-width", 2)
+            .transition()
+            .duration(120)
             .attr("x1", result.leftShoulder.x)
             .attr("y1", result.leftShoulder.y)
             .attr("x2", result.rightShoulder.x)
-            .attr("y2", result.rightShoulder.y)
-            .attr("stroke", "blue")
-            .attr("stroke-width", 2);
+            .attr("y2", result.rightShoulder.y);
 
           nose
+            .attr("stroke", "white")
+            .transition()
+            .duration(120)
+            .attr("r", (data.rightEarToLeftEar * 67) / 100)
             .attr("cx", result.nose.x)
-            .attr("cy", result.nose.y)
-            .attr("r", (data.rightEarToLeftEar * 60) / 100);
+            .attr("cy", result.nose.y);
 
           // Check face detection
           if (result.score > 0.22) {
@@ -95,9 +100,12 @@ function Home({ setCamera, captureVideo, setCaptureVideo, setSuccess }) {
 
           if (faceDetection < -20) {
             setValidate((prevState) => ({ ...prevState, face: 1 }));
+            postureDetection = -1;
+            faceDetection = -2;
           }
-          if (faceDetection > 20)
+          if (faceDetection > 20) {
             setValidate((prevState) => ({ ...prevState, face: -1 }));
+          }
 
           const checkAlignment =
             data.rightEarToLeftEar -
@@ -106,22 +114,22 @@ function Home({ setCamera, captureVideo, setCaptureVideo, setSuccess }) {
               ? 1
               : -1;
 
-          console.log(
-            data.rightEarToLeftEar - (data.noseToLeftEar + data.noseToRightEar)
-          );
+          // console.log(
+          //   data.rightEarToLeftEar - (data.noseToLeftEar + data.noseToRightEar)
+          // );
           if (checkAlignment > 0) {
             if (postureDetection > 0) postureDetection = 0;
             else postureDetection--;
           } else postureDetection++;
 
-          if (postureDetection < -20) {
+          if (postureDetection <= -20 && faceDetection <= -20) {
             setValidate((prevState) => ({ ...prevState, validatePosture: 1 }));
           }
           if (postureDetection > 20)
             setValidate((prevState) => ({ ...prevState, validatePosture: -1 }));
 
           // console.log(checkAlignment);
-          // console.log(faceDetection, postureDetection);
+          console.log(faceDetection, postureDetection);
           // console.log(data);
           // console.log(result);
         } else {
@@ -145,7 +153,7 @@ function Home({ setCamera, captureVideo, setCaptureVideo, setSuccess }) {
     const nose = svg
       .append("circle")
       .attr("fill", "none")
-      .attr("stroke", "white")
+      .attr("stroke", "none")
       .attr("stroke-width", "2px")
       .attr("opacity", 0.7);
 
@@ -203,7 +211,13 @@ function Home({ setCamera, captureVideo, setCaptureVideo, setSuccess }) {
           {captureVideo && (
             <div className="flex flex-row gap-12 justify-center  items-center flex-wrap w-full">
               <div className="relative ">
-                <div className={`bg-black rounded-xl relative z-20 `}>
+                <motion.div
+                  initial={{ scale: 0, x: -1600 }}
+                  animate={{ scale: 1, x: 0 }}
+                  transition={{ type: "tween" }}
+                  className={`bg-black rounded-xl relative z-20 `}
+                  style={{ height: videoHeight }}
+                >
                   <div className="w-full h-full absolute top-0 -z-10 ">
                     <Loader />
                   </div>
@@ -217,7 +231,7 @@ function Home({ setCamera, captureVideo, setCaptureVideo, setSuccess }) {
                     onUserMediaError={() => setCamera(true)}
                     className="rounded-3xl overflow-hidden z-20"
                   />
-                </div>
+                </motion.div>
                 <svg
                   className="absolute z-40 top-0"
                   ref={svgRef}
